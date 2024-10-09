@@ -1,11 +1,12 @@
  // Import the functions you need from the SDKs you need
  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
- import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+ import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider, FacebookAuthProvider} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
  import{getFirestore, setDoc, doc} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"
 
 
- const provider = new GoogleAuthProvider();
- 
+ const googleAuthProvider = new GoogleAuthProvider();
+ const facebookAuthProvider = new FacebookAuthProvider();
+
  const firebaseConfig = {
     apiKey: "AIzaSyCYTv0cBtxVxqg-BjTsLWOKk5YzpQ8ngVI",
     authDomain: "lakku-21bae.firebaseapp.com",
@@ -19,6 +20,7 @@
  // Initialize Firebase
  const app = initializeApp(firebaseConfig);
  const auth = getAuth(app);
+
  auth.languageCode = 'en'
  function showMessage(message, divId){
     var messageDiv=document.getElementById(divId);
@@ -29,10 +31,41 @@
         messageDiv.style.opacity=0;
     },5000);
  }
+ const facebookSignUp = document.getElementById('facebook-signup');
+ facebookSignUp.addEventListener('click', function(){
+    signInWithPopup(auth, facebookAuthProvider)
+        .then((result) => {
+            const user = result.user;
+            const credential = FacebookAuthProvider.credentialFromResult(result);
+            const accessToken = credential.accessToken;
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            const email = error.customData.email;
+            const credential = FacebookAuthProvider.credentialFromError(error);
+        });
+ })
+
+ const facebookSignIn = document.getElementById('facebook-signin');
+ facebookSignIn.addEventListener('click', function(){
+    signInWithPopup(auth, facebookAuthProvider)
+        .then((result) => {
+            const user = result.user;
+            const credential = FacebookAuthProvider.credentialFromResult(result);
+            const accessToken = credential.accessToken;
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            const email = error.customData.email;
+            const credential = FacebookAuthProvider.credentialFromError(error);
+        });
+ })
 
  const googleSignUp= document.getElementById('google-signup');
  googleSignUp.addEventListener('click', function(){
-        signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleAuthProvider)
         .then((result) => {
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
@@ -47,7 +80,7 @@
 
  const googleSignIn= document.getElementById('google-signin');
  googleSignIn.addEventListener('click', function(){
-        signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleAuthProvider)
         .then((result) => {
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
